@@ -15,14 +15,14 @@ public class Mailcontroller {
     @PostMapping("/verify/{email}")
     public ResponseEntity<?> sendVerificationCode(@PathVariable String email) {
        emailService.sendVerificationCode(email);
-        return ResponseEntity.ok("Đã gửi mã xác nhận tới email");
+        return ResponseEntity.ok("確認コードをメールに送信しました。");
     }
 
     @PostMapping("/verify-and-change-password")
     public ResponseEntity<?> verifyAndChangePassword(@RequestBody ForgotPasswordRequest request) {
         try {
             emailService.verifyCodeAndChangePassword(request);
-            return ResponseEntity.ok("Đổi mật khẩu thành công.");
+            return ResponseEntity.ok("パスワードの変更が正常に完了しました。");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

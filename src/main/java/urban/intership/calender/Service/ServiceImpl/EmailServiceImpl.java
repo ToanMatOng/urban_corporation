@@ -45,8 +45,8 @@ public class EmailServiceImpl implements EmailService {
         tokenRepository.save(resetToken);
         SendEmailRequest emailRequest = new SendEmailRequest(
                 email,
-                "Mã xác nhận đổi mật khẩu",
-                "Mã xác nhận của bạn là: " + token + "\nMã sẽ hết hạn sau 10 phút."
+                "パスワード変更の確認コード",
+                "あなたの確認コードは次のとおりです：" + token + "\nこのコードは10分後に有効期限が切れます。"
         );
         sendEmail(emailRequest);
     }
@@ -62,10 +62,10 @@ public class EmailServiceImpl implements EmailService {
     public void verifyCodeAndChangePassword(ForgotPasswordRequest request) {
         PasswordResetToken resetToken = tokenRepository.findByEmailAndToken(request.email(), request.token());
         if (resetToken == null || resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("Mã xác nhận không hợp lệ hoặc đã hết hạn.");
+            throw new RuntimeException("確認コードが無効、または有効期限が切れています。");
         }
         Employee employee = employeeRepository.findByEmail(request.email())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng."));
+                .orElseThrow(() -> new RuntimeException("ユーザーが見つかりません。"));
         employee.setPassword(passwordEncoder.encode(request.newPassword()));
         employeeRepository.save(employee);
         // Xoá mã sau khi dùng
@@ -73,8 +73,8 @@ public class EmailServiceImpl implements EmailService {
         // Gửi email thông báo (tuỳ chọn)
         sendEmail(new SendEmailRequest(
                 request.email(),
-                "Đổi mật khẩu thành công",
-                "Bạn đã đổi mật khẩu thành công. Nếu không phải bạn thực hiện, hãy liên hệ quản trị viên."
+                "パスワードの変更が正常に完了しました。",
+                "パスワードが正常に変更されました。ご本人でない場合は、管理者に連絡してください。"
         ));
     }
 } 
